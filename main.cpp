@@ -1,11 +1,9 @@
 #pragma once
 
-//#include <iostream>
-//#include <ctime>
-//#include <cstdlib>
-//#include <memory>
-#include <string>
 #include <iostream>
+#include <ctime>
+#include <cstdlib>
+#include <memory>
 #include <iomanip>
 #include <random>
 #include <exception>
@@ -15,16 +13,32 @@
 #include <vector>
 
 
-
 using namespace std;
 
 namespace function {
+
+    class Random {
+    private:
+        int _seed;
+        int _min;
+        int _max;
+    public:
+        Random() : _seed(0), _min(0), _max(1) {};
+        Random(int seed, int min, int max) : _seed(seed), _min(min), _max(max) {};
+        int generate_random_number() {
+            mt19937 mt(_seed);
+            uniform_int_distribution<int> distribution(_min, _max);
+            _seed++;
+            return distribution(mt);
+        }
+    };
     template<typename T>
     struct Node {
     public:
         T key;
         Node<T>* left;
         Node<T>* right;
+        Node() : key(0), left(nullptr), right(nullptr) {}
         Node(T value) : key(value), left(nullptr), right(nullptr) {}
     };
     template<typename T>
@@ -47,8 +61,8 @@ namespace function {
             new_node->right = copy(node->right);
             return new_node;
         }
-        
-        void print(Node<T>* node) { 
+
+        void print(Node<T>* node) {
             if (node) {
                 print(node->left);
                 std::cout << node->key << " ";
@@ -118,10 +132,10 @@ namespace function {
         ~SearchTree() {
             clear(root);
         }
-        Node<T>* get_root() const{
+        Node<T>* get_root() const {
             return root;
         }
-       
+
         SearchTree<T>& operator=(const SearchTree<T>& other) {
             if (this != &other) {
                 clear(root);
@@ -129,6 +143,17 @@ namespace function {
             }
             return *this;
         }
+
+        SearchTree<T>& fill(size_t count) {
+            size_t cur_count = 0;
+            Random test_seed(0, 0, count * 10);
+            while (cur_count != count) {
+                if (insert(test_seed.generate_random_number()))
+                    cur_count++;
+            }
+            return *this;
+        }
+
         void print() {
             print(root);
             std::cout << std::endl;
@@ -143,6 +168,9 @@ namespace function {
             return erase(root, val);
         }
     };
+
+
+
 
     template <typename T>
     SearchTree<T> unionSets(const SearchTree<T>& first, const SearchTree<T>& second) {
@@ -182,8 +210,8 @@ namespace function {
         Node<T>* set_first = first.get_root();
         Node<T>* set_second = second.get_root();
 
-        while (set_first && set_second) {
-            if (set_first->key < set_second->key) {
+        while (set_first ) {
+            if (set_second.c) {
                 set_first = set_first->right;
             }
             else if (set_first->key > set_second->key) {
@@ -206,6 +234,5 @@ namespace function {
 
         return result;
     }
-    
-    
-}*/
+    */
+}
