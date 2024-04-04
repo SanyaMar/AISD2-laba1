@@ -144,7 +144,7 @@ namespace function {
             return *this;
         }
 
-        SearchTree<T>& fill(size_t count) {
+        SearchTree<T>& completion(size_t count) {
             size_t cur_count = 0;
             Random test_seed(0, 0, count * 10);
             while (cur_count != count) {
@@ -169,8 +169,17 @@ namespace function {
         }
     };
 
-
-
+    double get_time_completion(size_t count) {
+        auto start = std::chrono::high_resolution_clock::now();
+        for (int i = 0; i <= 100; i++) {
+            SearchTree<int> test_set;
+            test_set.completion(count);
+        }
+        auto end = std::chrono::high_resolution_clock::now();
+        double rezult = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() / 100;
+        return rezult / count;
+    }
+   
 
     template <typename T>
     SearchTree<T> unionSets(const SearchTree<T>& first, const SearchTree<T>& second) {

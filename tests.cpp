@@ -52,6 +52,13 @@ TEST(Tests3, Rand) {
     cout <<"2 "<< seed.generate_random_number() << endl;
 }
 
+TEST(Tests3, Time_com) {
+    SearchTree<int> s3;
+    s3.completion(1000);
+
+    cout << "1000 = " << get_time_completion(1000) << " ms";
+}
+
 //TEST(Tests3, Symmetric) {
 //    SearchTree<int> tree1;
 //    tree1.insert(1);
