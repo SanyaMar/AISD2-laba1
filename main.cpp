@@ -3,7 +3,6 @@
 #include <iostream>
 #include <ctime>
 #include <cstdlib>
-#include <memory>
 #include <iomanip>
 #include <random>
 #include <exception>
@@ -179,7 +178,86 @@ namespace function {
         double rezult = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() / 100;
         return rezult / count;
     }
-   
+
+    double get_time_contains(SearchTree<int>& test_set, size_t count) {
+        Random test_seed(0, 0, count * 10);
+        auto start = std::chrono::high_resolution_clock::now();
+        for (int i = 0; i <= 1000; i++) {
+            test_set.contains(test_seed.generate_random_number());
+        }
+        auto end = std::chrono::high_resolution_clock::now();
+        double rezult= std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() / 1000;
+        return rezult / count;
+    }
+    double get_time_erase(SearchTree<int>& test_set, size_t count) {
+        Random test_seed(0, 0, count * 10);
+        SearchTree test_set_copy(test_set);
+        auto start = std::chrono::high_resolution_clock::now();
+        for (int i = 0; i <= 1000; i++) {
+            test_set_copy.erase(test_seed.generate_random_number());
+        }
+        auto end = std::chrono::high_resolution_clock::now();
+        double rezult = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() / 1000;
+        return rezult / count;
+    }
+    double get_time_insert(SearchTree<int>& test_set, size_t count) {
+        Random test_seed(0, 0, count * 10);
+        SearchTree test_set_copy(test_set);
+        auto start = std::chrono::high_resolution_clock::now();
+        for (int i = 0; i <= 1000; i++) {
+            test_set_copy.insert(test_seed.generate_random_number());
+        }
+        auto end = std::chrono::high_resolution_clock::now();
+        double rezult = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+        return rezult / count;
+    }
+
+
+    double get_time_completion_vector(size_t count) {
+        Random test_seed(0, 0, count * 10);
+        auto start = std::chrono::high_resolution_clock::now();
+        for (int i = 0; i <= 100; i++) {
+            vector<int> test_vec;
+            for (int i = 0; i <= count; i++)
+                test_vec.push_back(test_seed.generate_random_number());
+        }
+        auto end = std::chrono::high_resolution_clock::now();
+        double rezult = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() / 100;
+        return rezult / count;
+    }
+    double get_time_contains_vector(vector<int>& arr, size_t count) {
+        Random test_seed(0, 0, count * 10);
+        auto start = std::chrono::high_resolution_clock::now();
+        for (int i = 0; i <= 1000; i++) {
+            find(arr.begin(), arr.end(), test_seed.generate_random_number());
+        }
+        auto end = std::chrono::high_resolution_clock::now();
+        double rezult = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() / 1000;
+        return rezult / count;
+    }
+    double get_time_erase_vector(vector<int>& test_set, size_t count) {
+        Random test_seed(0, 0, count * 10);
+        vector<int> test_vec_copy(test_set);
+        auto start = std::chrono::high_resolution_clock::now();
+        for (int i = 0; i <= 1000; i++) {
+            const auto del_obj = remove(test_vec_copy.begin(), test_vec_copy.end(), test_seed.generate_random_number());
+            test_vec_copy.erase(del_obj, test_vec_copy.end());
+        }
+        auto end = std::chrono::high_resolution_clock::now();
+        double rezult = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() / 1000;
+        return rezult / count;
+    }
+    double get_time_insert_vector(vector<int>& test_set, size_t count) {
+        Random test_seed(0, 0, count * 10);
+        vector<int> test_vec_copy = test_set;
+        auto start = std::chrono::high_resolution_clock::now();
+        for (int i = 0; i <= 1000; i++) {
+            test_vec_copy.push_back(test_seed.generate_random_number());
+        }
+        auto end = std::chrono::high_resolution_clock::now();
+        double rezult = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+        return rezult / count;
+    }
 
     template <typename T>
     SearchTree<T> unionSets(const SearchTree<T>& first, const SearchTree<T>& second) {
@@ -213,35 +291,24 @@ namespace function {
 
         return result;
     }
-    /*template <typename T>
-    SearchTree<T> symmetric(const SearchTree<T>& first, const SearchTree<T>& second) {
+
+    
+    template<typename T>
+    SearchTree<T> symmetric(SearchTree<T>& set1, SearchTree<T>& set2) {
         SearchTree<T> result;
-        Node<T>* set_first = first.get_root();
-        Node<T>* set_second = second.get_root();
-
-        while (set_first ) {
-            if (set_second.c) {
-                set_first = set_first->right;
+        std::function<void(Node<T>*)> temp = [&](Node<T>* node) {
+            if (node != nullptr) {
+                temp(node->left);
+                if (!(set1.contains(node->key) && set2.contains(node->key)))
+                    result.insert(node->key);
+                temp(node->right);
             }
-            else if (set_first->key > set_second->key) {
-                result.insert(set_second->key);
-                set_second = set_second->right;
-            }
-            else {
-                set_first = set_first->right;
-                set_second = set_second->right;
-            }
-        }
-        while (set_first) {
-            result.insert(set_first->key);
-            set_first = set_first->right;
-        }
-        while (set_second) {
-            result.insert(set_second->key);
-            set_second = set_second->right;
-        }
-
+        };
+        temp(set2.get_root());
+        temp(set1.get_root());
         return result;
+    
     }
-    */
+
+    
 }
